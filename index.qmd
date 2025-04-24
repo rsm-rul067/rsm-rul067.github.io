@@ -1,0 +1,13 @@
+---
+title: "Ruoqi Li"
+image: "files/profile_pic.jpg"
+about:
+  template: jolla
+  links:
+    - icon: envelope
+      href: mailto:rul067@ucsd.edu
+    - icon: linkedin
+      href: https://www.linkedin.com/in/ruoqi-li-593a83257
+---
+
+Welcome to my website!
