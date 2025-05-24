@@ -249,7 +249,7 @@ for step in range(n_steps):
     samples[step] = beta_current
 
 posterior_samples = samples[burn_in:]
-posterior_samples
+posterior_samples   
 ```
 | Column Index | Parameter Name  | Interpretation |
 |--------------|------------------|----------------|
@@ -326,45 +326,42 @@ Suppose we did **not** simulate the data and instead received these results from
 
 
 ### Why move beyond the basic MNL model?
+The standard Multinomial Logit (MNL) model assumes that everyone shares the same preferences. For example:
 
-The standard Multinomial Logit (MNL) model assumes that **everyone shares the same preferences**. For example:
+> All individuals are equally likely to prefer Netflix over Hulu,  
+> and equally sensitive to price or advertising.
 
-> Everyone is equally likely to prefer Netflix over Hulu,  
-> and equally sensitive to price changes.
+However, in reality, people are different:
 
-But in the real world, this is rarely true:
-
-- Some people **love Netflix**, others don't care.
-- Some people are **very price-sensitive**, others are not.
+- Some love Netflix, others don’t care.
+- Some are highly price-sensitive, others are not.
 - Some tolerate ads, others strongly avoid them.
 
-To reflect this real-world variation, we need a model that allows **individual-level differences** in preferences. This leads us to the **multi-level (or hierarchical)** model.
+To capture this individual variation, we use a **multi-level (or hierarchical)** model. 
 
-Instead of estimating just one set of parameters for the entire population, we assume each person \( i \) has their own preference vector \( \beta_i \), drawn from a population distribution:
-\[
-\beta_i \sim \mathcal{N}(\mu, \Sigma)
-\]
+Instead of estimating just one parameter vector for the whole population, we assume that each person *i* has their own preference vector, denoted as `beta_i`. These individual-level preferences are drawn from a population-level distribution:
 
-This model captures **both overall trends** and **individual differences**, making it much more realistic for analyzing real-world conjoint data.
+> beta_i ~ Normal(mu, Sigma)
 
-### Key Modifications: 
-1. **Simulating hierarchical data**:
-   - Instead of one global β vector, we assume each respondent \( i \) has their own preference vector \( \beta_i \).
-   - These individual \( \beta_i \)s are drawn from a population distribution:
-     \[
-     \beta_i \sim \mathcal{N}(\mu, \Sigma)
-     \]
-   - You first draw \( \beta_i \) for each respondent, and then simulate choices using that individual's preferences.
+- `mu` is the average preference across all individuals;
+- `Sigma` is the covariance matrix describing how much preferences vary across people.
 
-2. **Estimating the model**:
-   - You no longer estimate a single \( \beta \), but instead estimate:
-     - \( \mu \): the mean of the population distribution,
-     - \( \Sigma \): the covariance matrix (individual-level variation),
-     - \( \beta_i \): each respondent’s specific preferences (if using full Bayesian methods).
-   - This often requires **Bayesian methods** (e.g., MCMC, HMC in PyMC or Stan) or **frequentist approaches** like simulated maximum likelihood.
+This structure allows us to model both **overall trends** (via `mu`) and **individual differences** (via `beta_i`), making the model more realistic for analyzing real-world conjoint data.
 
 
+### Key Modifications
 
+1. **To simulate hierarchical data:**
+   - Instead of using one shared beta, generate a unique `beta_i` for each individual.
+   - Each `beta_i` is sampled from a multivariate normal distribution with mean `mu` and covariance `Sigma`.
+   - Use each person's `beta_i` to simulate their choices.
+
+2. **To estimate the model:**
+   - Estimate:
+     - `mu`: the average preferences across respondents;
+     - `Sigma`: the variability of preferences across individuals;
+     - Optionally `beta_i`: the preferences for each person (e.g., in Bayesian models).
+   - This typically requires Bayesian methods (such as MCMC or HMC), or simulation-based frequentist approaches.
 
 
 

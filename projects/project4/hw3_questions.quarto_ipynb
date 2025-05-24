@@ -68,7 +68,7 @@
         "\n",
         ":::: {.callout-note collapse=\"true\"}"
       ],
-      "id": "cd1b3454"
+      "id": "ba38a2cb"
     },
     {
       "cell_type": "code",
@@ -136,7 +136,7 @@
         "\n",
         "df = pd.DataFrame(rows)"
       ],
-      "id": "ea688c0c",
+      "id": "dba32232",
       "execution_count": null,
       "outputs": []
     },
@@ -157,7 +157,7 @@
         "- Including the monthly price,\n",
         "- Tracking which alternative was chosen by the respondent."
       ],
-      "id": "687b9a89"
+      "id": "c930726a"
     },
     {
       "cell_type": "code",
@@ -167,7 +167,7 @@
         "df_prepared = df[['Respondent', 'Task', 'Alternative', 'Group', 'Chosen',\n",
         "                  'Netflix', 'Prime', 'Ads', 'Price']]"
       ],
-      "id": "762e9a5b",
+      "id": "3bb4be8a",
       "execution_count": null,
       "outputs": []
     },
@@ -177,7 +177,7 @@
       "source": [
         "## 4. Estimation via Maximum Likelihood"
       ],
-      "id": "19a72e6c"
+      "id": "9028332f"
     },
     {
       "cell_type": "code",
@@ -195,7 +195,7 @@
         "# Unique groups for choice sets\n",
         "unique_groups = np.unique(groups)"
       ],
-      "id": "acde9104",
+      "id": "2f89c1ba",
       "execution_count": null,
       "outputs": []
     },
@@ -207,7 +207,7 @@
         "\n",
         "The negative log-likelihood function is computed as follows:"
       ],
-      "id": "d3c4ef76"
+      "id": "fa29ace1"
     },
     {
       "cell_type": "code",
@@ -225,7 +225,7 @@
         "        log_likelihood += np.sum(y_group * log_prob)\n",
         "    return -log_likelihood  # negative for minimization"
       ],
-      "id": "af5f4f29",
+      "id": "32e9ee2c",
       "execution_count": null,
       "outputs": []
     },
@@ -235,7 +235,7 @@
       "source": [
         "After defining the log-likelihood function, we use scipy.optimize.minimize() to estimate the model parameters. We apply the BFGS algorithm to find the maximum likelihood estimates (MLEs), and use the inverse Hessian matrix to compute standard errors and 95% confidence intervals for each parameter."
       ],
-      "id": "81e73310"
+      "id": "8f53bc79"
     },
     {
       "cell_type": "code",
@@ -267,7 +267,7 @@
         "})\n",
         "results_df"
       ],
-      "id": "1518035d",
+      "id": "92fb9174",
       "execution_count": null,
       "outputs": []
     },
@@ -286,7 +286,7 @@
         "\n",
         "## 5. Estimation via Bayesian Methods"
       ],
-      "id": "bc468145"
+      "id": "9edef1aa"
     },
     {
       "cell_type": "code",
@@ -324,9 +324,9 @@
         "    samples[step] = beta_current\n",
         "\n",
         "posterior_samples = samples[burn_in:]\n",
-        "posterior_samples"
+        "posterior_samples   "
       ],
-      "id": "8710732f",
+      "id": "92189881",
       "execution_count": null,
       "outputs": []
     },
@@ -341,7 +341,7 @@
         "| `[ , 2]`      | `beta_Ads`       | **Negative impact of ads** (a more negative value indicates greater dislike for ads) |\n",
         "| `[ , 3]`      | `beta_Price`     | **Negative impact of price** (a more negative value indicates greater sensitivity to price) |"
       ],
-      "id": "ce7126d9"
+      "id": "0339360e"
     },
     {
       "cell_type": "code",
@@ -370,7 +370,7 @@
         "plt.tight_layout()\n",
         "plt.show()"
       ],
-      "id": "2c48c91a",
+      "id": "c85b612e",
       "execution_count": null,
       "outputs": []
     },
@@ -384,7 +384,7 @@
         "- **Posterior Histogram** (Bottom):  \n",
         "  The histogram approximates a smooth, bell-shaped distribution centered around the posterior mean. This reflects a stable estimate with symmetric uncertainty."
       ],
-      "id": "a0246bfb"
+      "id": "46ce1b40"
     },
     {
       "cell_type": "code",
@@ -408,7 +408,7 @@
         "\n",
         "posterior_summary"
       ],
-      "id": "e173d300",
+      "id": "1df706f0",
       "execution_count": null,
       "outputs": []
     },
@@ -433,44 +433,44 @@
         "\n",
         "\n",
         "### Why move beyond the basic MNL model?\n",
+        "The standard Multinomial Logit (MNL) model assumes that everyone shares the same preferences. For example:\n",
         "\n",
-        "The standard Multinomial Logit (MNL) model assumes that **everyone shares the same preferences**. For example:\n",
+        "> All individuals are equally likely to prefer Netflix over Hulu,  \n",
+        "> and equally sensitive to price or advertising.\n",
         "\n",
-        "> Everyone is equally likely to prefer Netflix over Hulu,  \n",
-        "> and equally sensitive to price changes.\n",
+        "However, in reality, people are different:\n",
         "\n",
-        "But in the real world, this is rarely true:\n",
-        "\n",
-        "- Some people **love Netflix**, others don't care.\n",
-        "- Some people are **very price-sensitive**, others are not.\n",
+        "- Some love Netflix, others don’t care.\n",
+        "- Some are highly price-sensitive, others are not.\n",
         "- Some tolerate ads, others strongly avoid them.\n",
         "\n",
-        "To reflect this real-world variation, we need a model that allows **individual-level differences** in preferences. This leads us to the **multi-level (or hierarchical)** model.\n",
+        "To capture this individual variation, we use a **multi-level (or hierarchical)** model. \n",
         "\n",
-        "Instead of estimating just one set of parameters for the entire population, we assume each person \\( i \\) has their own preference vector \\( \\beta_i \\), drawn from a population distribution:\n",
-        "\\[\n",
-        "\\beta_i \\sim \\mathcal{N}(\\mu, \\Sigma)\n",
-        "\\]\n",
+        "Instead of estimating just one parameter vector for the whole population, we assume that each person *i* has their own preference vector, denoted as `beta_i`. These individual-level preferences are drawn from a population-level distribution:\n",
         "\n",
-        "This model captures **both overall trends** and **individual differences**, making it much more realistic for analyzing real-world conjoint data.\n",
+        "> beta_i ~ Normal(mu, Sigma)\n",
         "\n",
-        "### Key Modifications: \n",
-        "1. **Simulating hierarchical data**:\n",
-        "   - Instead of one global β vector, we assume each respondent \\( i \\) has their own preference vector \\( \\beta_i \\).\n",
-        "   - These individual \\( \\beta_i \\)s are drawn from a population distribution:\n",
-        "     \\[\n",
-        "     \\beta_i \\sim \\mathcal{N}(\\mu, \\Sigma)\n",
-        "     \\]\n",
-        "   - You first draw \\( \\beta_i \\) for each respondent, and then simulate choices using that individual's preferences.\n",
+        "- `mu` is the average preference across all individuals;\n",
+        "- `Sigma` is the covariance matrix describing how much preferences vary across people.\n",
         "\n",
-        "2. **Estimating the model**:\n",
-        "   - You no longer estimate a single \\( \\beta \\), but instead estimate:\n",
-        "     - \\( \\mu \\): the mean of the population distribution,\n",
-        "     - \\( \\Sigma \\): the covariance matrix (individual-level variation),\n",
-        "     - \\( \\beta_i \\): each respondent’s specific preferences (if using full Bayesian methods).\n",
-        "   - This often requires **Bayesian methods** (e.g., MCMC, HMC in PyMC or Stan) or **frequentist approaches** like simulated maximum likelihood.\n"
+        "This structure allows us to model both **overall trends** (via `mu`) and **individual differences** (via `beta_i`), making the model more realistic for analyzing real-world conjoint data.\n",
+        "\n",
+        "\n",
+        "### Key Modifications\n",
+        "\n",
+        "1. **To simulate hierarchical data:**\n",
+        "   - Instead of using one shared beta, generate a unique `beta_i` for each individual.\n",
+        "   - Each `beta_i` is sampled from a multivariate normal distribution with mean `mu` and covariance `Sigma`.\n",
+        "   - Use each person's `beta_i` to simulate their choices.\n",
+        "\n",
+        "2. **To estimate the model:**\n",
+        "   - Estimate:\n",
+        "     - `mu`: the average preferences across respondents;\n",
+        "     - `Sigma`: the variability of preferences across individuals;\n",
+        "     - Optionally `beta_i`: the preferences for each person (e.g., in Bayesian models).\n",
+        "   - This typically requires Bayesian methods (such as MCMC or HMC), or simulation-based frequentist approaches.\n"
       ],
-      "id": "f8e84523"
+      "id": "f85dedd9"
     }
   ],
   "metadata": {

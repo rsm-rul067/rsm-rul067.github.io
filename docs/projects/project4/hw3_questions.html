@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Ruoqi Li">
-<meta name="dcterms.date" content="2025-05-22">
+<meta name="dcterms.date" content="2025-05-23">
 
 <title>Multinomial Logit Model – quarto_website</title>
 <style>
@@ -200,7 +200,7 @@ window.Quarto = {
   <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion">6. Discussion</a>
   <ul class="collapse">
   <li><a href="#why-move-beyond-the-basic-mnl-model" id="toc-why-move-beyond-the-basic-mnl-model" class="nav-link" data-scroll-target="#why-move-beyond-the-basic-mnl-model">Why move beyond the basic MNL model?</a></li>
-  <li><a href="#key-modifications" id="toc-key-modifications" class="nav-link" data-scroll-target="#key-modifications">Key Modifications:</a></li>
+  <li><a href="#key-modifications" id="toc-key-modifications" class="nav-link" data-scroll-target="#key-modifications">Key Modifications</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -227,7 +227,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 22, 2025</p>
+      <p class="date">May 23, 2025</p>
     </div>
   </div>
   
@@ -281,7 +281,7 @@ Note
 </div>
 <div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<div id="e617ec46" class="cell" data-execution_count="1">
+<div id="564708a7" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -357,7 +357,7 @@ Note
 <li>Including the monthly price,</li>
 <li>Tracking which alternative was chosen by the respondent.</li>
 </ul>
-<div id="c2c95816" class="cell" data-execution_count="2">
+<div id="abfaa1b0" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Group'</span>] <span class="op">=</span> df[<span class="st">'Respondent'</span>] <span class="op">*</span> n_tasks <span class="op">+</span> df[<span class="st">'Task'</span>]</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df_prepared <span class="op">=</span> df[[<span class="st">'Respondent'</span>, <span class="st">'Task'</span>, <span class="st">'Alternative'</span>, <span class="st">'Group'</span>, <span class="st">'Chosen'</span>,</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                  <span class="st">'Netflix'</span>, <span class="st">'Prime'</span>, <span class="st">'Ads'</span>, <span class="st">'Price'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -367,7 +367,7 @@ Note
 <h2 class="anchored" data-anchor-id="estimation-via-maximum-likelihood">4. Estimation via Maximum Likelihood</h2>
 <p>To estimate the parameters of the MNL model, we first implement the log-likelihood function. Each individual chooses one alternative from a set of three, and the probability of choosing an alternative is modeled using the softmax function derived from the utility specification.</p>
 <p>The negative log-likelihood function is computed as follows:</p>
-<div id="aec6c99b" class="cell" data-execution_count="4">
+<div id="2e877436" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Log-likelihood function</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> neg_log_likelihood(beta):</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    utilities <span class="op">=</span> X <span class="op">@</span> beta  <span class="co"># linear part</span></span>
@@ -381,7 +381,7 @@ Note
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>log_likelihood  <span class="co"># negative for minimization</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>After defining the log-likelihood function, we use scipy.optimize.minimize() to estimate the model parameters. We apply the BFGS algorithm to find the maximum likelihood estimates (MLEs), and use the inverse Hessian matrix to compute standard errors and 95% confidence intervals for each parameter.</p>
-<div id="54e21665" class="cell" data-execution_count="5">
+<div id="9e07cd61" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Initial guess</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>beta_init <span class="op">=</span> np.zeros(X.shape[<span class="dv">1</span>])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -407,7 +407,7 @@ Note
 <span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="st">'CI Upper (95%)'</span>: conf_int[:, <span class="dv">1</span>]</span>
 <span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>})</span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>results_df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 
 
@@ -473,50 +473,41 @@ Note
 </section>
 <section id="estimation-via-bayesian-methods" class="level2">
 <h2 class="anchored" data-anchor-id="estimation-via-bayesian-methods">5. Estimation via Bayesian Methods</h2>
-<div id="0dc3c1aa" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_prior(beta):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    logp <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    logp <span class="op">+=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> np.<span class="bu">sum</span>((beta[:<span class="dv">3</span>] <span class="op">/</span> <span class="dv">5</span>) <span class="op">**</span> <span class="dv">2</span>) <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> np.log(<span class="dv">5</span> <span class="op">*</span> np.sqrt(<span class="dv">2</span> <span class="op">*</span> np.pi))</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    logp <span class="op">+=</span> <span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> (beta[<span class="dv">3</span>] <span class="op">**</span> <span class="dv">2</span>) <span class="op">-</span> np.log(np.sqrt(<span class="dv">2</span> <span class="op">*</span> np.pi))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> logp</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Posterior = log-likelihood + log-prior</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_posterior(beta):</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">-</span>neg_log_likelihood(beta) <span class="op">+</span> log_prior(beta)</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>n_steps <span class="op">=</span> <span class="dv">11000</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>burn_in <span class="op">=</span> <span class="dv">1000</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>dim <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>beta_current <span class="op">=</span> np.zeros(dim)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>log_post_current <span class="op">=</span> log_posterior(beta_current)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>samples <span class="op">=</span> np.zeros((n_steps, dim))</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Proposal SDs</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>proposal_sds <span class="op">=</span> np.array([<span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="fl">0.05</span>, <span class="fl">0.005</span>])</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">42</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> step <span class="kw">in</span> <span class="bu">range</span>(n_steps):</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    proposal <span class="op">=</span> beta_current <span class="op">+</span> np.random.normal(<span class="dv">0</span>, proposal_sds)</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    log_post_proposal <span class="op">=</span> log_posterior(proposal)</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    accept_prob <span class="op">=</span> np.exp(log_post_proposal <span class="op">-</span> log_post_current)</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> np.random.rand() <span class="op">&lt;</span> accept_prob:</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        beta_current <span class="op">=</span> proposal</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        log_post_current <span class="op">=</span> log_post_proposal</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    samples[step] <span class="op">=</span> beta_current</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>posterior_samples <span class="op">=</span> samples[burn_in:]</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>posterior_samples</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
-<pre><code>array([[ 1.05609013,  0.61286261, -0.66019234, -0.09823814],
-       [ 0.98664628,  0.62786546, -0.67794842, -0.09616401],
-       [ 1.05266698,  0.58414367, -0.64656811, -0.09756155],
-       ...,
-       [ 1.30649992,  0.67801126, -0.90835072, -0.0988359 ],
-       [ 1.30649992,  0.67801126, -0.90835072, -0.0988359 ],
-       [ 1.30649992,  0.67801126, -0.90835072, -0.0988359 ]])</code></pre>
-</div>
-</div>
+<!-- ```{python}
+import numpy as np
+def log_prior(beta):
+    logp = 0
+    logp += -0.5 * np.sum((beta[:3] / 5) ** 2) - 3 * np.log(5 * np.sqrt(2 * np.pi))
+    logp += -0.5 * (beta[3] ** 2) - np.log(np.sqrt(2 * np.pi))
+    return logp
+
+# Posterior = log-likelihood + log-prior
+def log_posterior(beta):
+    return -neg_log_likelihood(beta) + log_prior(beta)
+
+n_steps = 11000
+burn_in = 1000
+dim = 4
+beta_current = np.zeros(dim)
+log_post_current = log_posterior(beta_current)
+samples = np.zeros((n_steps, dim))
+
+# Proposal SDs
+proposal_sds = np.array([0.05, 0.05, 0.05, 0.005])
+np.random.seed(42)
+
+for step in range(n_steps):
+    proposal = beta_current + np.random.normal(0, proposal_sds)
+    log_post_proposal = log_posterior(proposal)
+    accept_prob = np.exp(log_post_proposal - log_post_current)
+    if np.random.rand() < accept_prob:
+        beta_current = proposal
+        log_post_current = log_post_proposal
+    samples[step] = beta_current
+
+posterior_samples = samples[burn_in:]
+posterior_samples   
+``` -->
 <table class="caption-top table">
 <colgroup>
 <col style="width: 29%">
@@ -553,76 +544,55 @@ Note
 </tr>
 </tbody>
 </table>
-<div id="aff1d383" class="cell" data-execution_count="7">
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="hw3_questions_files/figure-html/cell-8-output-1.png" width="758" height="566" class="figure-img"></p>
-</figure>
-</div>
-</div>
-</div>
+<!-- ```{python}
+#| echo: false
+import matplotlib.pyplot as plt
+
+# Extract samples for beta_Netflix
+beta_netflix_samples = posterior_samples[:, 0]
+
+# Plot trace plot and histogram
+fig, ax = plt.subplots(2, 1, figsize=(8, 6), sharex=False)
+
+# Trace plot
+ax[0].plot(beta_netflix_samples, color='black', linewidth=0.5)
+ax[0].set_title("Trace Plot for beta_Netflix")
+ax[0].set_ylabel("Sampled Value")
+
+# Histogram
+ax[1].hist(beta_netflix_samples, bins=50, color='skyblue', edgecolor='black', density=True)
+ax[1].set_title("Posterior Distribution of beta_Netflix")
+ax[1].set_xlabel("beta_Netflix")
+ax[1].set_ylabel("Density")
+
+plt.tight_layout()
+plt.show()
+``` -->
 <ul>
 <li><p><strong>Trace Plot</strong> (Top):<br>
 The trace plot shows rapid mixing and no obvious trend or drift, indicating that the sampler has converged and is exploring the posterior effectively.</p></li>
 <li><p><strong>Posterior Histogram</strong> (Bottom):<br>
 The histogram approximates a smooth, bell-shaped distribution centered around the posterior mean. This reflects a stable estimate with symmetric uncertainty.</p></li>
 </ul>
-<div id="5966c7be" class="cell" data-execution_count="8">
-<div class="cell-output cell-output-display" data-execution_count="24">
-<div>
+<!-- ```{python}
+#| echo: false
+# Compute posterior summary statistics
+param_names = ['beta_Netflix', 'beta_Prime', 'beta_Ads', 'beta_Price']
+posterior_means = np.mean(posterior_samples, axis=0)
+posterior_sds = np.std(posterior_samples, axis=0)
+cred_ints = np.percentile(posterior_samples, [2.5, 97.5], axis=0).T
 
+# Combine into a DataFrame
+posterior_summary = pd.DataFrame({
+    'Parameter': param_names,
+    'Posterior Mean': posterior_means,
+    'Posterior Std. Dev': posterior_sds,
+    '95% CI Lower': cred_ints[:, 0],
+    '95% CI Upper': cred_ints[:, 1]
+})
 
-<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Parameter</th>
-<th data-quarto-table-cell-role="th">Posterior Mean</th>
-<th data-quarto-table-cell-role="th">Posterior Std. Dev</th>
-<th data-quarto-table-cell-role="th">95% CI Lower</th>
-<th data-quarto-table-cell-role="th">95% CI Upper</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>beta_Netflix</td>
-<td>1.040854</td>
-<td>0.116817</td>
-<td>0.814826</td>
-<td>1.281594</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">1</td>
-<td>beta_Prime</td>
-<td>0.589986</td>
-<td>0.116535</td>
-<td>0.365248</td>
-<td>0.839191</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2</td>
-<td>beta_Ads</td>
-<td>-0.809980</td>
-<td>0.089848</td>
-<td>-0.983910</td>
-<td>-0.629427</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">3</td>
-<td>beta_Price</td>
-<td>-0.097349</td>
-<td>0.005689</td>
-<td>-0.108413</td>
-<td>-0.086486</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
+posterior_summary
+``` -->
 <section id="interpretation" class="level3">
 <h3 class="anchored" data-anchor-id="interpretation">Interpretation</h3>
 <ul>
@@ -644,39 +614,46 @@ The histogram approximates a smooth, bell-shaped distribution centered around th
 </ul>
 <section id="why-move-beyond-the-basic-mnl-model" class="level3">
 <h3 class="anchored" data-anchor-id="why-move-beyond-the-basic-mnl-model">Why move beyond the basic MNL model?</h3>
-<p>The standard Multinomial Logit (MNL) model assumes that <strong>everyone shares the same preferences</strong>. For example:</p>
+<p>The standard Multinomial Logit (MNL) model assumes that everyone shares the same preferences. For example:</p>
 <blockquote class="blockquote">
-<p>Everyone is equally likely to prefer Netflix over Hulu,<br>
-and equally sensitive to price changes.</p>
+<p>All individuals are equally likely to prefer Netflix over Hulu,<br>
+and equally sensitive to price or advertising.</p>
 </blockquote>
-<p>But in the real world, this is rarely true:</p>
+<p>However, in reality, people are different:</p>
 <ul>
-<li>Some people <strong>love Netflix</strong>, others don’t care.</li>
-<li>Some people are <strong>very price-sensitive</strong>, others are not.</li>
+<li>Some love Netflix, others don’t care.</li>
+<li>Some are highly price-sensitive, others are not.</li>
 <li>Some tolerate ads, others strongly avoid them.</li>
 </ul>
-<p>To reflect this real-world variation, we need a model that allows <strong>individual-level differences</strong> in preferences. This leads us to the <strong>multi-level (or hierarchical)</strong> model.</p>
-<p>Instead of estimating just one set of parameters for the entire population, we assume each person ( i ) has their own preference vector ( _i ), drawn from a population distribution: [ _i (, ) ]</p>
-<p>This model captures <strong>both overall trends</strong> and <strong>individual differences</strong>, making it much more realistic for analyzing real-world conjoint data.</p>
+<p>To capture this individual variation, we use a <strong>multi-level (or hierarchical)</strong> model.</p>
+<p>Instead of estimating just one parameter vector for the whole population, we assume that each person <em>i</em> has their own preference vector, denoted as <code>beta_i</code>. These individual-level preferences are drawn from a population-level distribution:</p>
+<blockquote class="blockquote">
+<p>beta_i ~ Normal(mu, Sigma)</p>
+</blockquote>
+<ul>
+<li><code>mu</code> is the average preference across all individuals;</li>
+<li><code>Sigma</code> is the covariance matrix describing how much preferences vary across people.</li>
+</ul>
+<p>This structure allows us to model both <strong>overall trends</strong> (via <code>mu</code>) and <strong>individual differences</strong> (via <code>beta_i</code>), making the model more realistic for analyzing real-world conjoint data.</p>
 </section>
 <section id="key-modifications" class="level3">
-<h3 class="anchored" data-anchor-id="key-modifications">Key Modifications:</h3>
+<h3 class="anchored" data-anchor-id="key-modifications">Key Modifications</h3>
 <ol type="1">
-<li><strong>Simulating hierarchical data</strong>:
+<li><strong>To simulate hierarchical data:</strong>
 <ul>
-<li>Instead of one global β vector, we assume each respondent ( i ) has their own preference vector ( _i ).</li>
-<li>These individual ( _i )s are drawn from a population distribution: [ _i (, ) ]</li>
-<li>You first draw ( _i ) for each respondent, and then simulate choices using that individual’s preferences.</li>
+<li>Instead of using one shared beta, generate a unique <code>beta_i</code> for each individual.</li>
+<li>Each <code>beta_i</code> is sampled from a multivariate normal distribution with mean <code>mu</code> and covariance <code>Sigma</code>.</li>
+<li>Use each person’s <code>beta_i</code> to simulate their choices.</li>
 </ul></li>
-<li><strong>Estimating the model</strong>:
+<li><strong>To estimate the model:</strong>
 <ul>
-<li>You no longer estimate a single ( ), but instead estimate:
+<li>Estimate:
 <ul>
-<li>( ): the mean of the population distribution,</li>
-<li>( ): the covariance matrix (individual-level variation),</li>
-<li>( _i ): each respondent’s specific preferences (if using full Bayesian methods).</li>
+<li><code>mu</code>: the average preferences across respondents;</li>
+<li><code>Sigma</code>: the variability of preferences across individuals;</li>
+<li>Optionally <code>beta_i</code>: the preferences for each person (e.g., in Bayesian models).</li>
 </ul></li>
-<li>This often requires <strong>Bayesian methods</strong> (e.g., MCMC, HMC in PyMC or Stan) or <strong>frequentist approaches</strong> like simulated maximum likelihood.</li>
+<li>This typically requires Bayesian methods (such as MCMC or HMC), or simulation-based frequentist approaches.</li>
 </ul></li>
 </ol>
 
